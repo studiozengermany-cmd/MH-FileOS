@@ -1,23 +1,45 @@
-### AL ###
-#Template for AL projects for Dynamics 365 Business Central
-#launch.json folder
+# Rust
+/target/
+**/*.rs.bk
+
+# JavaScript / Tauri front end
+node_modules/
+dist/
+.vite/
+coverage/
+
+# Generated fixture sandboxes
+/fixtures/sandbox/runtime/
+
+# Local catalog, journal, diagnostics, and benchmarks
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.log
+/artifacts/
+/benchmarks/results/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.pfx
+*.key
+
+# IDE / operating system
+.DS_Store
+Thumbs.db
+.idea/
 .vscode/
-#Cache folder
-.alcache/
-#Symbols folder
-.alpackages/
-#Snapshots folder
-.snapshots/
-#Testing Output folder
-.output/
-#Extension App-file
-*.app
-#Rapid Application Development File
-rad.json
-#Translation Base-file
-*.g.xlf
-#License-files
-*.bclicense
-*.flf
-#Test results file
-TestResults.xml
+
+# Build and packaging output
+/release/
+/packages/output/
+*.msi
+*.msix
+*.exe
+*.dmg
+*.AppImage

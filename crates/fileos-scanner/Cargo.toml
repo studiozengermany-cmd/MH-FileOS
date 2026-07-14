@@ -1,0 +1,21 @@
+[package]
+name = "fileos-scanner"
+description = "Bounded read-only filesystem observation boundary for MH FileOS."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+fileos-app = { path = "../fileos-app" }
+fileos-domain = { path = "../fileos-domain" }
+fileos-platform-windows = { path = "../fileos-platform-windows" }
+
+[dev-dependencies]
+fileos-testkit = { path = "../fileos-testkit" }
+
+[lints]
+workspace = true

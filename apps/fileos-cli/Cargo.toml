@@ -1,0 +1,27 @@
+[package]
+name = "fileos-cli"
+description = "Read-only diagnostic CLI for explicit MH FileOS scan roots."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "fileos-cli"
+path = "src/main.rs"
+
+[[example]]
+name = "fixture-catalog-demo"
+path = "examples/fixture_catalog_demo.rs"
+
+[dependencies]
+fileos-app = { path = "../../crates/fileos-app" }
+fileos-domain = { path = "../../crates/fileos-domain" }
+fileos-scanner = { path = "../../crates/fileos-scanner" }
+
+[dev-dependencies]
+fileos-catalog = { path = "../../crates/fileos-catalog" }
+fileos-testkit = { path = "../../crates/fileos-testkit" }
+
+[lints]
+workspace = true

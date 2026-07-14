@@ -1,0 +1,22 @@
+[package]
+name = "fileos-catalog"
+description = "Catalog persistence and migration boundary for MH FileOS."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+fileos-app = { path = "../fileos-app" }
+fileos-domain = { path = "../fileos-domain" }
+rusqlite = { version = "=0.40.1", default-features = false, features = ["bundled"] }
+
+[dev-dependencies]
+fileos-scanner = { path = "../fileos-scanner" }
+fileos-testkit = { path = "../fileos-testkit" }
+
+[lints]
+workspace = true

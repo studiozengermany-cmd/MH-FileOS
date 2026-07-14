@@ -1,0 +1,13 @@
+[package]
+name = "fileos-domain"
+description = "Platform-independent domain boundaries and invariants for MH FileOS."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lib]
+path = "src/lib.rs"
+
+[lints]
+workspace = true

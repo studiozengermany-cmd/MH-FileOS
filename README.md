@@ -1,27 +1,41 @@
 # MH FileOS
 
-MH FileOS là ứng dụng desktop local-first dành cho Windows 10/11, giúp người dùng lập chỉ mục, phân tích, tổ chức và phục hồi file một cách có kiểm chứng.
+> **Trạng thái:** dự án cá nhân đang nghiên cứu và phát triển. Hiện mới hoàn tất lát cắt read-only nội bộ trên dữ liệu thử nghiệm; chưa phải phần mềm thương mại và chưa sẵn sàng dùng trên dữ liệu thật của người dùng.
 
-> Trạng thái hiện tại: **EP-000 / Milestone 6 read-only vertical slice đã hoàn tất local checkpoint trên synthetic fixture; UI/Milestone 7 tùy chọn chưa bắt đầu và không có mutation trên dữ liệu người dùng.**
+MH FileOS được Minh Hiếu xây dựng trước hết để phục vụ nhu cầu cá nhân: hiểu rõ dữ liệu trên máy Windows, lập chỉ mục file, phát hiện vấn đề và chuẩn bị thao tác theo cách có thể kiểm tra, giải thích và phục hồi.
 
-Repository này cố ý bắt đầu bằng đặc tả, safety invariants, kiến trúc và chiến lược kiểm thử. Không module nào được coi là hoàn thành chỉ vì có giao diện hoặc build thành công.
+Khi dự án đủ ổn định và an toàn, một số phần có thể được chia sẻ để cộng đồng tham khảo hoặc dùng thử. README này chỉ mô tả những gì đã có bằng chứng; không coi giao diện, build hoặc mã khung là tính năng đã hoàn thành.
 
-## Tài liệu nguồn sự thật
+## Nguyên tắc cốt lõi
 
-Đọc theo thứ tự:
+Thứ tự ưu tiên của dự án:
 
-1. [`docs/SAFETY-INVARIANTS.md`](docs/SAFETY-INVARIANTS.md) — authority cao nhất và các điều kiện an toàn không được phá vỡ.
-2. [`AGENTS.md`](AGENTS.md) — luật bắt buộc cho mọi coding agent.
-3. [`PLANS.md`](PLANS.md) — Execution Plan EP-000 đang hoạt động.
-4. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — kiến trúc kỹ thuật và ranh giới module.
-5. [`docs/TEST-STRATEGY.md`](docs/TEST-STRATEGY.md) — bằng chứng cần có trước khi phát hành.
-6. [`docs/MASTER-PLAN.md`](docs/MASTER-PLAN.md) — phạm vi sản phẩm và lộ trình.
+1. Không làm mất dữ liệu.
+2. Kết quả phải đúng.
+3. Mọi hành động phải giải thích được.
+4. Có kiểm chứng và khả năng phục hồi.
+5. Hiệu năng tốt.
+6. Giao diện đẹp.
+7. Tự động hóa chỉ được thêm sau cùng.
 
-`MH-FILEOS-MASTER-PLAN-MVP-v1.0.md` ở repository root là tài liệu legacy không có authority; mọi xung đột được giải quyết theo danh sách trên.
+Nếu một tính năng xung đột với an toàn hoặc khả năng phục hồi, tính năng đó phải bị hoãn.
 
-## Tuyên bố MVP
+## Trạng thái hiện tại
 
-MVP phải thực hiện được chuỗi sau:
+`EP-000 / Milestone 6` đã hoàn tất một lát cắt read-only trên synthetic fixture do testkit tạo.
+
+Điều này có nghĩa:
+
+- Có quy trình tạo dữ liệu thử nghiệm, scan, catalog, tổng hợp kết quả và xác minh source không đổi.
+- Có SQLite artifact và JSON summary dùng cho kiểm chứng nội bộ.
+- Command demo không nhận hoặc quét dữ liệu thật của người dùng.
+- UI chưa bắt đầu.
+- Chưa có thao tác thay đổi dữ liệu người dùng.
+- Chưa có bản phát hành ổn định hoặc installer chính thức cho người dùng cuối.
+
+## Mục tiêu MVP
+
+MVP chỉ được coi là đạt khi thực hiện được đầy đủ chuỗi sau:
 
 ```text
 Scan read-only
@@ -35,7 +49,28 @@ Scan read-only
 → Undo/Recovery
 ```
 
-MVP không được tự động xóa, ghi đè hoặc di chuyển file ngoài một kế hoạch đã duyệt.
+MVP không được tự động xóa, ghi đè hoặc di chuyển file ngoài một kế hoạch đã được người dùng xem và chấp thuận.
+
+## Demo read-only nội bộ
+
+```powershell
+cargo run --quiet -p fileos-cli --example fixture-catalog-demo --locked --offline
+```
+
+Demo hiện tại chỉ chạy với dữ liệu giả lập. Kết quả chỉ được đánh dấu `verified` khi summary khớp manifest, snapshot trước–sau bằng nhau và sandbox đã được dọn sạch.
+
+## Tài liệu nguồn sự thật
+
+Đọc theo thứ tự:
+
+1. [`docs/SAFETY-INVARIANTS.md`](docs/SAFETY-INVARIANTS.md)
+2. [`AGENTS.md`](AGENTS.md)
+3. [`PLANS.md`](PLANS.md)
+4. [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+5. [`docs/TEST-STRATEGY.md`](docs/TEST-STRATEGY.md)
+6. [`docs/MASTER-PLAN.md`](docs/MASTER-PLAN.md)
+
+`MH-FILEOS-MASTER-PLAN-MVP-v1.0.md` ở root là tài liệu legacy và không có authority khi xung đột với danh sách trên.
 
 ## Cấu trúc hiện tại
 
@@ -47,61 +82,31 @@ MH-FileOS/
 ├─ Cargo.toml
 ├─ Cargo.lock
 ├─ docs/
-│  ├─ MASTER-PLAN.md
-│  ├─ SAFETY-INVARIANTS.md
-│  ├─ ARCHITECTURE.md
-│  ├─ TEST-STRATEGY.md
-│  ├─ SAFETY-TRACEABILITY.md
-│  └─ adr/
 ├─ crates/
-│  ├─ fileos-domain/
-│  ├─ fileos-app/
-│  ├─ fileos-testkit/
-│  ├─ fileos-catalog/
-│  ├─ fileos-scanner/
-│  └─ fileos-platform-windows/
 ├─ apps/
-│  ├─ README.md
-│  └─ fileos-cli/
 ├─ scripts/
-│  ├─ verify-toolchain.ps1
-│  ├─ verify-workspace.ps1
-│  └─ verify.ps1
 └─ fixtures/
-   └─ README.md
 ```
 
-Workspace được mở rộng từng milestone theo `PLANS.md`; crate chưa đến milestone hành vi chỉ giữ responsibility contract.
+Workspace được mở rộng theo từng milestone. Một crate tồn tại trong source không đồng nghĩa toàn bộ hành vi của crate đó đã hoàn thành.
 
-## M6 — demo read-only nội bộ
-
-Chạy toàn bộ lát cắt fixture → scan → catalog → summary → xác minh source không đổi bằng một command:
-
-```powershell
-cargo run --quiet -p fileos-cli --example fixture-catalog-demo --locked --offline
-```
-
-Example chỉ dùng synthetic fixture do testkit tạo, ghi SQLite dưới `artifacts`, xuất JSON không chứa path và chỉ báo `verified` sau khi summary khớp manifest, snapshot trước–sau bằng nhau và sandbox đã cleanup. Command không nhận hoặc quét dữ liệu người dùng.
-
-## Cách giao lượt đầu cho Codex
+## Quy tắc làm việc với coding agent
 
 ```text
 Đọc tài liệu theo đúng authority order trong README.md.
-Chỉ thực hiện milestone EP-000 đang được chủ sản phẩm phê duyệt trong PLANS.md.
-Không tạo production feature, không cài dependency và không truy cập ngoài repository.
-Trước khi sửa file, hãy tóm tắt phạm vi, rủi ro và tiêu chí hoàn thành.
-Sau khi làm xong, cung cấp danh sách file thay đổi và bằng chứng kiểm tra.
+Chỉ thực hiện milestone đang được chủ dự án phê duyệt trong PLANS.md.
+Không tự tạo production feature, không tự cài dependency và không truy cập ngoài repository.
+Trước khi sửa file, tóm tắt phạm vi, rủi ro và tiêu chí hoàn thành.
+Sau khi hoàn tất, cung cấp danh sách file thay đổi và bằng chứng kiểm tra.
+Không xóa, khóa hoặc làm mất lịch sử dự án khi chưa có chỉ dẫn rõ ràng từ chủ dự án.
 ```
 
-## Nguyên tắc phát hành
+## Quyền sử dụng và chia sẻ
 
-Thứ tự ưu tiên:
+Dự án hiện được công khai để minh bạch quá trình nghiên cứu và phát triển. Không nên sử dụng trên dữ liệu quan trọng cho đến khi có hướng dẫn phát hành, kiểm thử và giấy phép rõ ràng.
 
-1. Không mất dữ liệu.
-2. Kết quả đúng.
-3. Giải thích rõ.
-4. Hiệu năng tốt.
-5. Giao diện đẹp.
-6. Tự động hóa.
+## Liên hệ
 
-Nếu một tính năng xung đột với an toàn hoặc khả năng phục hồi, tính năng đó phải bị hoãn.
+- Website: https://studiominhhieu.com/
+- Email: support@studiominhhieu.com
+- GitHub: https://github.com/studiozengermany-cmd

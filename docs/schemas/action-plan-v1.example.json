@@ -1,0 +1,26 @@
+{
+  "schema": "action-plan-v1",
+  "actions": [
+    {
+      "id": "01895c2e-1f00-7abc-8def-0123456789ab",
+      "kind": "stage_for_deletion",
+      "source": "C:\\in\\dup.bin",
+      "source_cmp": "c:/in/dup.bin",
+      "destination": "C:\\.mh-fileos\\quarantine\\op\\act\\dup.bin",
+      "destination_cmp": "c:/.mh-fileos/quarantine/op/act/dup.bin",
+      "checksum": {
+        "algorithm": "blake3",
+        "digest_hex": "abababababababababababababababababababababababababababababababab"
+      }
+    },
+    {
+      "id": "01895c2e-1f00-7cde-9012-3456789abcde",
+      "kind": "move",
+      "source": "C:\\in\\report.pdf",
+      "source_cmp": "c:/in/report.pdf",
+      "destination": "C:\\sorted\\report.pdf",
+      "destination_cmp": "c:/sorted/report.pdf",
+      "checksum": null
+    }
+  ]
+}

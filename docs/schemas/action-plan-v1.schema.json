@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mh-fileos/schemas/action-plan-v1.schema.json",
+  "title": "MH FileOS Action Plan v1",
+  "description": "Immutable proposed action plan produced by the domain layer for user review (Approval Gate). No field in this schema authorizes execution; a later gated executor validates freshness, scope, and protected zones before any mutation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "actions"],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "const": "action-plan-v1",
+      "description": "Schema version tag. Bumped on any breaking field change."
+    },
+    "actions": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Ordered proposed actions. Insertion order is significant and preserved.",
+      "items": { "$ref": "#/$defs/action" }
+    }
+  },
+  "$defs": {
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "source", "source_cmp", "destination", "destination_cmp", "checksum"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "description": "Time-ordered RFC 9562 UUID version 7."
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["move", "rename", "stage_for_deletion"],
+          "description": "Typed operation. stage_for_deletion moves to Quarantine (ADR-005) and requires a checksum."
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Display source path, preserved exactly as supplied."
+        },
+        "source_cmp": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Normalized comparison representation of the source used for structural checks."
+        },
+        "destination": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Display destination path, preserved exactly as supplied."
+        },
+        "destination_cmp": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Normalized comparison representation of the destination used for structural checks."
+        },
+        "checksum": {
+          "description": "Expected content digest a later verifier must observe. Required (non-null) for stage_for_deletion.",
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/checksum" }
+          ]
+        }
+      }
+    },
+    "checksum": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "digest_hex"],
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "enum": ["blake3", "sha256"]
+        },
+        "digest_hex": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "Lowercase hex of a 32-byte digest."
+        }
+      }
+    }
+  }
+}

@@ -105,10 +105,11 @@ Verification:
 
 # EP-000 — Repository Bootstrap và Read-only Foundation
 
-**Status:** IN_PROGRESS — Milestone 5 reopened after independent review; Milestone 1 Windows CI validation remains deferred
-**Owner:** Primary implementation agent  
-**Created:** 2026-07-13  
-**Last updated:** 2026-07-14  
+**Status:** VERIFYING — M0–M6 local checkpoints complete; Windows CI and EP-000 safety acceptance pending
+
+- **Owner:** Primary implementation agent
+- **Created:** 2026-07-13
+- **Last updated:** 2026-07-27
 
 ## Outcome
 
@@ -148,7 +149,8 @@ MH FileOS là công cụ quản lý file có rủi ro dữ liệu cao. Bắt đ�
 - Watcher.
 - Auto Mode.
 - Production installer.
-- Quét ổ đĩa hoặc Downloads thật.
+- Whole-drive onboarding UX, approved-root registry hoặc cờ opt-in riêng; production CLI hiện nhận một absolute directory do người dùng chọn.
+- Automated verification trên dữ liệu cá nhân; mọi test scan vẫn dùng synthetic fixture hoặc test temp.
 - AI/API/cloud.
 
 ## Safety impact
@@ -161,7 +163,7 @@ Invariants áp dụng:
 - SI-013 Test isolation.
 - SI-017 Truthful result reporting.
 
-Mọi scan test chỉ được chạy trong `fixtures/sandbox` hoặc OS temp directory do `fileos-testkit` tạo.
+Mọi automated scan test chỉ được chạy trong `fixtures/sandbox` hoặc OS temp directory do `fileos-testkit` tạo. Production CLI được nhận một absolute directory do người dùng chủ động chọn, nhưng vẫn chỉ quan sát, giữ resource bounds và không theo reparse target.
 
 ## Milestone 0 — Repository Contract Verification
 
@@ -418,7 +420,7 @@ generate fixture → scan fixture → catalog → print summary → verify uncha
 
 ### Checkpoint
 
-Dừng EP-000. Không tự chuyển sang UI hoặc duplicate engine.
+Dừng implementation tại M6 local checkpoint. EP-000 chỉ được đóng sau Windows CI và safety acceptance; không tự chuyển sang UI hoặc duplicate engine.
 
 ## Milestone 7 — Optional Desktop Shell Spike
 
@@ -440,7 +442,7 @@ Milestone này chỉ được duyệt sau Milestone 6.
 
 ## Rollback/Recovery
 
-- EP-000 không thao tác dữ liệu thật.
+- EP-000 không mutation dữ liệu người dùng; production CLI chỉ quan sát root do người dùng chọn.
 - Mỗi milestone là commit riêng.
 - Nếu toolchain/dependency không phù hợp, revert milestone đó thay vì chắp vá.
 - Temp DB và fixture có cleanup giới hạn scope.
@@ -459,6 +461,9 @@ Milestone này chỉ được duyệt sau Milestone 6.
 - 2026-07-14 — Chủ sản phẩm duyệt M3 cùng authority cleanup — Fixture generator dùng capability type, standard library và fail-closed cleanup; không khôi phục test trên dữ liệu người dùng thật.
 - 2026-07-14 — Chủ sản phẩm duyệt M4 và chia việc bằng worktree riêng — Scanner chỉ đọc fixture trong verification; không thêm dependency, catalog, UI hoặc mutation ngoài phạm vi đã duyệt.
 - 2026-07-14 — Chủ sản phẩm duyệt M5 SQLite Catalog v1 — Pin `rusqlite 0.40.1` với bundled SQLite, triển khai migration/upsert/conservative absence/typed errors trong sandbox; UI và mọi move/delete vẫn ngoài phạm vi.
+- 2026-07-27 — M6 local checkpoint hoàn tất; EP-000 chuyển sang `VERIFYING` cho Windows CI và safety acceptance, chưa chuyển sang M7.
+- 2026-07-27 — Production CLI giữ hành vi scan read-only một absolute directory mặc định; fixture-only áp dụng cho automated verification, không thêm allow flag hoặc approved-root registry.
+- 2026-07-27 — Lát cắt CI bắt đầu từ canonical GitHub `main`; lịch sử local M0–M6 độc lập được giữ để tham chiếu, không merge unrelated histories.
 
 ## Progress
 
@@ -467,7 +472,8 @@ Milestone này chỉ được duyệt sau Milestone 6.
 - [x] 2026-07-14 — Milestone 0 verification hoàn tất; dừng tại checkpoint trước Toolchain Baseline.
 - [x] 2026-07-14 — Chủ sản phẩm duyệt bắt đầu Milestone 1 theo hướng local-first.
 - [x] 2026-07-14 — Milestone 1 local toolchain pins và verifier pass; không cài hoặc tải dependency/tool mới.
-- [ ] Milestone 1 Windows CI validation — hoãn theo chỉ đạo local-first.
+- [x] 2026-07-27 — Windows CI workflow đã được thêm trên branch canonical và dùng aggregate verifier hiện hữu.
+- [ ] Milestone 1 Windows CI validation — chờ workflow chạy thành công trên GitHub tại đúng commit SHA.
 - [ ] Milestone 1 full acceptance — Windows CI validation còn thiếu và phải hoàn tất trước khi đóng EP-000.
 - [x] 2026-07-14 — Chủ sản phẩm duyệt bắt đầu Milestone 2 và phạm vi điều chỉnh Execution Plan.
 - [x] 2026-07-14 — Milestone 2 local workspace contracts hoàn tất; dừng tại checkpoint trước fixture generator.
@@ -476,6 +482,7 @@ Milestone này chỉ được duyệt sau Milestone 6.
 - [x] 2026-07-14 — Milestone 4 read-only scanner CLI hoàn tất local checkpoint; dừng trước catalog Milestone 5.
 - [x] 2026-07-14 — Milestone 5 SQLite Catalog v1 hoàn tất local checkpoint sau remediation và final independent re-review; dừng trước Milestone 6.
 - [x] 2026-07-14 — Milestone 6 read-only vertical slice hoàn tất local checkpoint bằng single-command fixture demo; dừng trước UI/Milestone 7 tùy chọn.
+- [ ] EP-000 safety traceability review/sign-off — cần phân loại hoặc chấp nhận rõ các residual evidence limits trước khi đóng plan.
 
 ## Evidence
 
@@ -552,21 +559,17 @@ Milestone này chỉ được duyệt sau Milestone 6.
 - **[ĐÃ XÁC MINH BẰNG FILE]** Diff review xác nhận chỉ có M6 example/dev-dependency/verifier/docs; không migration mới, UI, network, move, rename, delete hoặc user-file write path.
 - **[CHƯA KIỂM THỬ]** Process-kill giữa fixture demo có thể để lại orphaned fixture capability cần cleanup được duyệt; optional symlink không được tạo trên host run này; Windows 10/11 CI, non-Windows runtime, performance/soak và production volume identity composition vẫn chưa có bằng chứng M6.
 
-### Evidence cần bàn giao ở các milestone sau
+### Evidence còn thiếu để đóng EP-000
 
-- Version đã pin và ADR toolchain.
-- Commands build/lint/test đã chạy.
-- Test summary.
-- Fixture before/after proof.
-- CI run.
-- File thay đổi theo milestone.
-- Known limitations.
+- Windows CI run thành công tại đúng commit SHA, kèm run URL/log aggregate verifier.
+- Safety traceability review/sign-off cho các invariant áp dụng và residual evidence limits.
+- Quyết định rõ blocker nào phải xử lý trong EP-000, giới hạn nào được defer sang hardening sau đó.
 
 ## Remaining risks
 
 - Node `24.17.0` là LTS và đã có local nhưng không phải patch Node 24 mới nhất tại ngày quyết định; nâng patch cần thay đổi có chủ đích và chạy lại verifier.
-- Windows CI validation đang hoãn theo chỉ đạo local-first, nên Milestone 1 tổng thể chưa hoàn tất acceptance “cùng command chạy được local và CI”.
-- Cargo workspace đã có scanner CLI và SQLite Catalog v1 behavior trên synthetic fixture; chưa có frontend, M6 one-command demo, stable Windows volume/file identity hoặc bất kỳ mutation behavior nào.
+- Windows CI workflow đã có nhưng chưa chạy trên GitHub, nên Milestone 1 chưa hoàn tất acceptance “cùng command chạy được local và CI”.
+- Cargo workspace đã có scanner CLI, SQLite Catalog v1 và M6 one-command fixture demo; chưa có frontend, stable Windows volume/file identity hoặc bất kỳ mutation behavior nào.
 - Cargo proxy path cho `cargo clippy` bị treo trên máy hiện tại; verifier Milestone 2 dùng trực tiếp `cargo-clippy` của exact pinned toolchain và cần xác minh lại proxy/tool behavior trước khi chuẩn hóa command cho CI.
 - Windows permission/reparse behavior khác CI runner.
 - Permission-denied fixture bằng Windows ACL và recovery của orphaned fixture capability trong testkit sau process crash chưa được triển khai; catalog scan-run recovery đã có API và integration test riêng.

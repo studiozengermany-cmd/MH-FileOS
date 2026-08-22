@@ -3,7 +3,7 @@
 **Document ID:** ARCH-001  
 **Status:** Accepted for EP-000 implementation
 **Scope:** MVP desktop application, Windows-first  
-**Last updated:** 2026-07-14
+**Last updated:** 2026-07-27
 
 This document defines the target technical architecture for MH FileOS. It is subordinate to [SAFETY-INVARIANTS.md](./SAFETY-INVARIANTS.md): when architecture and safety conflict, safety wins.
 
@@ -408,8 +408,9 @@ Initial ADR queue:
 
 | ID | Decision | Status |
 |---|---|---|
+| ADR-000 | Local Toolchain Baseline | Accepted |
 | ADR-001 | Rust core + Tauri 2 + React | Proposed |
-| ADR-002 | SQLite catalog and append-only operation events | Proposed |
+| ADR-002 | SQLite Catalog v1 dependency and persistence boundary | Accepted |
 | ADR-003 | Windows identity and path representation | Research required |
 | ADR-004 | BLAKE3 duplicate fingerprint with optional byte verification | Proposed |
 | ADR-005 | Quarantine layout and retention policy | Decision required |
@@ -420,17 +421,28 @@ Each ADR records context, decision, alternatives, safety impact, migration/rever
 
 ## 17. Architecture acceptance criteria
 
-The architecture is ready to leave Sprint 0 only when:
+### EP-000 read-only exit gates
 
 - crate boundaries and dependency direction are represented by a compiling workspace;
 - the domain and application crates compile without Tauri or React;
-- the scanner can run against `fixtures/sandbox` without mutation capability;
-- SQLite migrations and repositories pass integration tests;
-- no mutation API exists outside the executor port;
-- path and identity behavior has Windows-specific tests;
-- queue and worker bounds are configuration-visible and tested;
-- release CSP/capability configuration has a security test;
+- the scanner can observe one explicit absolute root without mutation capability or following reparse targets;
+- automated scanner/catalog evidence runs only against synthetic fixtures or test temp;
+- SQLite Catalog v1 migrations and repositories pass integration tests;
+- queue, open-directory and issue bounds are configuration-visible and tested;
+- no user-file mutation API exists;
+- the aggregate verifier passes locally and on Windows CI;
+- safety traceability residual limits receive explicit review/sign-off;
 - all deviations from this document are recorded in ADRs or an active Execution Plan.
+
+### Later architecture and release gates
+
+- stable Windows volume/file identity and comparison normalization have dedicated tests;
+- protected-zone policy is implemented before any mutation capability;
+- desktop CSP and Tauri capability configuration have security tests;
+- executor, journal and recovery pass their fault-injection gates;
+- performance and clean Windows 10/11 release evidence meet `TEST-STRATEGY.md`.
+
+These later gates do not become EP-000 completion claims; deferral must remain visible in safety traceability.
 
 ## 18. Open technical questions
 

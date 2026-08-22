@@ -5,6 +5,8 @@
 **Product mode:** Local-first, offline core  
 **Status:** Approved direction; implementation begins only through `PLANS.md`  
 
+**Implementation checkpoint (2026-07-27):** EP-000 M0–M6 local checkpoints pass; EP-000 remains `VERIFYING` pending Windows CI and safety acceptance. Production CLI supports read-only scan of one absolute directory; automated evidence remains fixture-only. Phase 2, UI, installer and user-file mutation have not started.
+
 ## 1. Product statement
 
 MH FileOS là trung tâm quản lý file cá nhân có khả năng:

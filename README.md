@@ -4,7 +4,7 @@
 
 ### Hệ thống nghiên cứu quản lý file local-first, ưu tiên an toàn và khả năng phục hồi
 
-![Status](https://img.shields.io/badge/Status-Milestone%206%20read--only-F59E0B)
+![Status](https://img.shields.io/badge/Status-EP--000%20VERIFYING-F59E0B)
 ![Platform](https://img.shields.io/badge/Target-Windows%2010%2F11-2563EB)
 ![Language](https://img.shields.io/badge/Language-Rust-8B4513)
 ![Safety](https://img.shields.io/badge/Priority-Data%20safety-16A34A)
@@ -14,7 +14,7 @@
 </div>
 
 > [!IMPORTANT]
-> MH FileOS hiện là **dự án nghiên cứu cá nhân**. Lát cắt hiện tại chỉ chạy read-only trên dữ liệu thử nghiệm do testkit tạo. Dự án chưa có UI hoàn chỉnh, chưa có installer chính thức và chưa sẵn sàng chạy trên dữ liệu quan trọng của người dùng.
+> MH FileOS hiện là **dự án nghiên cứu cá nhân**. Production CLI có thể scan read-only một absolute directory do người dùng chọn; automated verification chỉ dùng dữ liệu thử nghiệm do testkit tạo. Dự án chưa có UI hoàn chỉnh, installer chính thức hoặc safety acceptance cho dữ liệu quan trọng.
 
 ## Mục lục
 
@@ -80,10 +80,12 @@ Thứ tự ưu tiên không được đảo ngược:
 
 ## Trạng thái hiện tại
 
-**Execution Plan:** `EP-000`  
-**Milestone:** `M6 — read-only vertical slice`  
-**Dữ liệu chạy:** synthetic fixture  
-**Mutation trên dữ liệu người dùng:** chưa có
+- **Execution Plan:** `EP-000 — VERIFYING`
+- **Milestone:** `M0–M6 local checkpoints hoàn tất`
+- **Production CLI:** scan read-only một absolute directory
+- **Automated evidence:** synthetic fixture
+- **Windows CI và safety acceptance:** đang chờ
+- **Mutation trên dữ liệu người dùng:** chưa có
 
 ### Đã có bằng chứng
 
@@ -130,22 +132,21 @@ Không được bỏ qua bước người dùng phê duyệt. Không được t�
 - PowerShell hoặc terminal có thể chạy Cargo.
 - Repository đã được clone đầy đủ.
 
-### Lệnh demo
+### Scan read-only một thư mục
+
+```powershell
+cargo run --quiet -p fileos-cli --locked --offline -- "C:\absolute\directory"
+```
+
+CLI nhận đúng một absolute directory, không theo reparse target, giữ giới hạn tài nguyên và chỉ xuất summary JSON không chứa path. Command này chưa ghi kết quả vào catalog và không phải công cụ dọn file.
+
+### Demo M6 tự kiểm chứng
 
 ```powershell
 cargo run --quiet -p fileos-cli --example fixture-catalog-demo --locked --offline
 ```
 
-Lệnh này:
-
-1. tạo synthetic fixture trong sandbox;
-2. scan fixture ở chế độ chỉ đọc;
-3. ghi catalog SQLite dưới thư mục artifact;
-4. tạo summary JSON;
-5. đối chiếu manifest và snapshot;
-6. cleanup sandbox.
-
-Lệnh **không nhận đường dẫn dữ liệu người dùng** và không nên được mô tả như một công cụ dọn file hoàn chỉnh.
+Demo tự tạo synthetic fixture, scan read-only, ghi SQLite dưới artifact, đối chiếu manifest/snapshot rồi cleanup sandbox. Automated verification chỉ dùng workflow này; không dùng dữ liệu người dùng làm fixture.
 
 ## Cách đọc kết quả
 
@@ -163,7 +164,6 @@ Nếu chỉ chạy được command nhưng thiếu một trong các bằng chứ
 
 - UI desktop cho người dùng cuối.
 - Installer Windows chính thức.
-- Scan dữ liệu người dùng thật.
 - Findings hoàn chỉnh cho nhiều loại vấn đề.
 - Action Plan có giao diện phê duyệt.
 - Transactional execution trên dữ liệu thật.
@@ -244,7 +244,7 @@ AI là công cụ hỗ trợ thực hiện. Quyết định sản phẩm, mức 
 - xác định mô hình approval;
 - bổ sung transactional execution trong sandbox;
 - xây verification, journal và recovery;
-- chỉ sau đó mới xem xét UI và dữ liệu thật.
+- chỉ sau đó mới xem xét UI và mutation trên dữ liệu thật.
 
 Mọi milestone phải cập nhật `PLANS.md` và bằng chứng test tương ứng.
 

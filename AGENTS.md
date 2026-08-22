@@ -31,14 +31,14 @@ Không được tự diễn giải một yêu cầu theo cách làm yếu safety
 
 ### Bị cấm mặc định
 
-- Quét `C:\`, `J:\`, home directory, Downloads thật hoặc bất kỳ thư mục người dùng nào ngoài fixture.
+- Agent hoặc automated test tự quét `C:\`, `J:\`, home directory, Downloads thật hoặc bất kỳ thư mục người dùng nào ngoài fixture; production CLI vẫn nhận một absolute directory do người dùng chủ động chọn.
 - Di chuyển, đổi tên, xóa hoặc thay nội dung file thật.
 - Chạy app hoặc test dưới quyền Administrator nếu không có yêu cầu riêng đã duyệt.
 - Ghi ra ngoài repository hoặc test temp directory.
-- Theo junction/symlink/reparse point ra ngoài fixture.
+- Theo junction/symlink/reparse point ra ngoài scope quét.
 - Dùng đường dẫn hard-code theo máy của contributor.
 
-Mọi test filesystem phải có một `scope root` rõ ràng và kiểm tra canonical path vẫn nằm bên trong scope trước khi ghi.
+Mọi test filesystem phải có một `scope root` rõ ràng và kiểm tra canonical path vẫn nằm bên trong scope trước khi ghi. Production scan chỉ quan sát, giữ giới hạn tài nguyên và không theo reparse target; quyền nhận root thật không mở rộng quyền test hoặc mutation.
 
 ## 4. Các lệnh cần xin phê duyệt
 
@@ -297,6 +297,6 @@ Build thành công nhưng chưa chạy test không phải Done.
 
 - Phase: Read-only Foundation / Sprint 0.
 - Read-only foundation: Milestone 6 read-only vertical slice đã hoàn tất local checkpoint trong synthetic fixture sandbox; UI/Milestone 7 tùy chọn chưa bắt đầu.
-- Scope mặc định: tài liệu, workspace contracts, synthetic fixture sandbox và catalog database dưới test artifacts; không dùng dữ liệu người dùng làm test.
+- Scope kiểm thử mặc định: tài liệu, workspace contracts, synthetic fixture sandbox và catalog database dưới test artifacts; không dùng dữ liệu người dùng làm test. Production CLI nhận một absolute directory do người dùng chọn và chỉ scan read-only.
 - Execution Plan hoạt động: `EP-000` trong `PLANS.md`.
 - Tính năng tự động move/delete: bị cấm cho đến khi các gate trong `docs/TEST-STRATEGY.md` đạt.
